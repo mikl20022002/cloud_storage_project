@@ -9,7 +9,7 @@ class DbSettings(BaseSettings):
     DB_NAME: str
 
     def async_db_url(self):
-        return f"postgres+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+        return f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 

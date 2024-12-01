@@ -4,6 +4,7 @@ from config import db_settings
 from cloud_storage_project.models.models_orm import Base, UserOrm
 from cloud_storage_project.models.models_pydantic import CreateUserPyd
 
+
 async_engine = create_async_engine(db_settings.async_db_url())
 
 async_session_factory = async_sessionmaker(async_engine)
@@ -34,4 +35,10 @@ async def is_user_exists(username: str) -> bool:
         res = await session.execute(stmt)
         return res.scalar() is not None
 
+async def get_user_data(username: str) -> str | None:
+    async with async_session_factory() as session:
+        stmt = select(UserOrm).where(UserOrm.username == username)
+        res = await session.execute(stmt)
+        row = res.fetchone()
+        return row[0] if row else None
 

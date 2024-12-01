@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
+from decouple import config
+from datetime import timedelta
 
 class DbSettings(BaseSettings):
     DB_USER: str
@@ -23,4 +24,6 @@ class ServerSettings(BaseSettings):
 
 db_settings = DbSettings()
 server_settings = ServerSettings()
-
+SECRET_KEY = config("SECRET_KEY")
+JWT_ALGORITHM = config("JWT_ALGORITHM")
+TOKEN_EXP_TIME = timedelta(minutes=int(config("TOKEN_EXP_MINUTES")))

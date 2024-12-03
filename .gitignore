@@ -2,3 +2,4 @@ app/.env
 app/.pytest_cache/*
 app/__pycache__/*
 models/__pycache__/*
+app/local_storage/*

@@ -35,10 +35,17 @@ async def is_user_exists(username: str) -> bool:
         res = await session.execute(stmt)
         return res.scalar() is not None
 
+
 async def get_user_data(username: str) -> str | None:
     async with async_session_factory() as session:
         stmt = select(UserOrm).where(UserOrm.username == username)
         res = await session.execute(stmt)
         row = res.fetchone()
         return row[0] if row else None
+
+
+async def update_user_data(user: UserOrm):
+    async with async_session_factory() as session:
+        await session.merge(user)
+        await session.commit()
 

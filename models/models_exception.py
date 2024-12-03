@@ -28,3 +28,24 @@ class InvalidAuthDataException(HTTPException):
         self.detail = detail
         self.headers = {"WWW-Authenticate": "Bearer"}
 
+
+class UserFileNotFoundException(HTTPException):
+    def __init__(self, status_code=400, detail="User file not found"):
+        self.status_code = status_code
+        self.detail = detail
+        self.headers = {"WWW-Authenticate": "Bearer"}
+
+
+class NotEnoughUserMemoryException(HTTPException):
+    def __init__(self, status_code=403, detail="Not enough user memory to upload the file"):
+        self.status_code = status_code
+        self.detail = detail
+        self.headers = {"WWW-Authenticate": "Bearer"}
+
+
+class NotEnoughServerMemoryException(HTTPException):
+    def __init__(self, status_code=507, detail="Not enough server memory to upload the file"):
+        self.status_code = status_code
+        self.detail = detail
+        self.headers = {"WWW-Authenticate": "Bearer"}
+

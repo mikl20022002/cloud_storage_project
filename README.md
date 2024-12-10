@@ -11,6 +11,6 @@ Authentication: JWT
 
 - [x] User registration and authentication
 - [x] File saving
-- [ ] File downloading
+- [x] File downloading
 - [ ] RBAC
 - [ ] Admin panel

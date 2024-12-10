@@ -75,7 +75,6 @@ async def save_user_file(user_file: UploadFile, path: str, username: str, buffer
         raise NotEnoughServerMemoryException()
 
     buffer_size = int(buffer_size)
-    path = os.path.join(INITIAL_DIR, username, path, user_file.filename)
     os.makedirs(os.path.dirname(path), exist_ok=True)
 
     async with aiofiles.open(path, "wb") as local_file:
@@ -101,3 +100,6 @@ async def save_user_file(user_file: UploadFile, path: str, username: str, buffer
     await update_user_memory_usage(username, user_file.size)
     await user_file.close()
     return True
+
+def construct_path(path_list, username):
+    return os.path.join(INITIAL_DIR, username, *path_list)

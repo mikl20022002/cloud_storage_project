@@ -49,3 +49,9 @@ class NotEnoughServerMemoryException(HTTPException):
         self.detail = detail
         self.headers = {"WWW-Authenticate": "Bearer"}
 
+class PathNotExistsException(HTTPException):
+    def __init__(self, status_code=400, detail="Path does not exists"):
+        self.status_code = status_code
+        self.detail = detail
+        self.headers = {"WWW-Authenticate": "Bearer"}
+

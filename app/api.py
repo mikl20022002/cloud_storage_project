@@ -1,12 +1,14 @@
-from fastapi import FastAPI, Depends, UploadFile, Body
+from fastapi import FastAPI, Depends, UploadFile, Body, Form
 from fastapi.security import OAuth2PasswordRequestForm
+from fastapi.responses import FileResponse
 import uvicorn
 from config import server_settings, INITIAL_DIR
-from utils import hash_password, generate_token, verify_token, verify_password, save_user_file
+from utils import hash_password, generate_token, verify_token, verify_password, save_user_file, construct_path
 from orm import create_user, is_user_exists, dev_create_tables, dev_delete_tables, get_user_data
-from cloud_storage_project.models.models_pydantic import CreateUserPyd
-from cloud_storage_project.models.models_exception import UserExistsException, InvalidAuthDataException
+from cloud_storage_project.models.models_pydantic import CreateUserPyd, FilePathPyd
+from cloud_storage_project.models.models_exception import UserExistsException, InvalidAuthDataException, PathNotExistsException
 import os
+import json
 
 
 app = FastAPI()
@@ -49,7 +51,20 @@ async def user_authentication(form_data=Depends(OAuth2PasswordRequestForm)):
 
 
 @app.post("/load_file")
-async def load_file(user_file: UploadFile, path: str = Body(...), payload=Depends(verify_token)):
+async def load_file(user_file: UploadFile, path_list_json: str = Form(...), payload=Depends(verify_token)):
+
+    """
+    Takes user file and save it.
+
+    :param user_file: auto
+    :param path_list_json: Relative path to file saving place in string format (Form data).
+                           Example: ["folder1", "folder2", "file1.png"]
+    :param payload: auto
+    :return: note "file been saved" or HTTPException
+    """
+
+    path_list = json.loads(path_list_json)
+    path = construct_path(path_list, payload["username"])
     await save_user_file(user_file, path, payload["username"])
     return {"message": "user file have been saved"}
 
@@ -66,7 +81,18 @@ async def get_user_info(username):
         return {"massage": "user not found"}
 
 
-# TODO: add roles; /get/{username} - only admin access; change on_event to "lifespan"; err 422 custom handler
+@app.get("/download_file")
+async def download_file(path_list: FilePathPyd, payload=Depends(verify_token)):
+    path = construct_path(path_list.path, payload["username"])
+
+    if not os.path.exists(path):
+        raise PathNotExistsException()
+
+    return FileResponse(path)
+
+
+
+# TODO: change on_event to "lifespan"; err 422 custom handler
 
 
 if __name__ == "__main__":

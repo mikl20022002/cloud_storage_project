@@ -7,3 +7,6 @@ class CreateUserPyd(BaseModel):
     memory_usage: int | None = None
     memory_limit: int | None = None
 
+class FilePathPyd(BaseModel):
+    path: list[str]
+
